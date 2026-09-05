@@ -128,9 +128,9 @@ const Home = () => {
                 <div className="mt-2.5 space-y-1 text-xs">
                   <div className="flex items-center justify-between bg-white px-2 py-1 rounded border border-blue-100">
                     <span className="text-slate-500 font-mono text-[11px]">Email:</span>
-                    <span className="font-mono font-medium text-slate-900 text-[11px] truncate max-w-[150px]">apex.delhi@skills.gov.in</span>
+                    <span className="font-mono font-medium text-slate-900 text-[11px] truncate max-w-[150px]">apex@skills.org</span>
                     <button
-                      onClick={() => copyToClipboard('apex.delhi@skills.gov.in', 'teacher_email')}
+                      onClick={() => copyToClipboard('apex@skills.org', 'teacher_email')}
                       className="text-slate-400 hover:text-slate-700 shrink-0"
                       title="Copy Email"
                     >
@@ -139,9 +139,9 @@ const Home = () => {
                   </div>
                   <div className="flex items-center justify-between bg-white px-2 py-1 rounded border border-blue-100">
                     <span className="text-slate-500 font-mono text-[11px]">Pass:</span>
-                    <span className="font-mono font-bold text-slate-900">TeacherSecurePass2026!</span>
+                    <span className="font-mono font-bold text-slate-900">password123</span>
                     <button
-                      onClick={() => copyToClipboard('TeacherSecurePass2026!', 'teacher_pass')}
+                      onClick={() => copyToClipboard('password123', 'teacher_pass')}
                       className="text-slate-400 hover:text-slate-700"
                       title="Copy Password"
                     >
@@ -181,9 +181,9 @@ const Home = () => {
                   </div>
                   <div className="flex items-center justify-between bg-white px-2 py-1 rounded border border-rose-100">
                     <span className="text-slate-500 font-mono text-[11px]">Pass:</span>
-                    <span className="font-mono font-bold text-slate-900">AdminSecurePassword2026!</span>
+                    <span className="font-mono font-bold text-slate-900">Admin@2026</span>
                     <button
-                      onClick={() => copyToClipboard('AdminSecurePassword2026!', 'admin_pass')}
+                      onClick={() => copyToClipboard('Admin@2026', 'admin_pass')}
                       className="text-slate-400 hover:text-slate-700"
                       title="Copy Password"
                     >
