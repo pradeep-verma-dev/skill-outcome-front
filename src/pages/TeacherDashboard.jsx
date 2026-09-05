@@ -40,6 +40,7 @@ const COURSES_LIST = [
 const TeacherDashboard = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState('');
   const [trainees, setTrainees] = useState([]);
   const [analytics, setAnalytics] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,6 +69,7 @@ const TeacherDashboard = () => {
 
   const loadData = async () => {
     setLoading(true);
+    setDashboardError('');
     try {
       const [traineesRes, analyticsRes] = await Promise.all([
         api.get('/teacher/trainees'),
@@ -82,6 +84,13 @@ const TeacherDashboard = () => {
       }
     } catch (err) {
       console.error('Failed to load teacher dashboard:', err);
+      if (err.response?.status === 404) {
+        setDashboardError('API endpoint not found (404). Please verify that VITE_API_URL points to your backend URL.');
+      } else if (err.message === 'Network Error' || err.code === 'ERR_NETWORK') {
+        setDashboardError('Unable to connect to backend server. Please verify backend is running on port 5000.');
+      } else {
+        setDashboardError(err.response?.data?.message || err.message || 'Failed to fetch dashboard data from server');
+      }
     } finally {
       setLoading(false);
     }
@@ -167,6 +176,41 @@ const TeacherDashboard = () => {
   });
 
   const { stats, courseBreakdown = [], needsFollowUp = [] } = analytics || {};
+
+  if (loading && !analytics) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-12">
+        <div className="w-10 h-10 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+          Loading Institute Dashboard...
+        </p>
+      </div>
+    );
+  }
+
+  if (dashboardError && !analytics) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-slate-50 min-h-[60vh]">
+        <div className="max-w-lg w-full bg-white border border-rose-200 rounded p-6 shadow-sm text-center">
+          <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center mx-auto mb-3">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <h2 className="text-base font-bold text-slate-900 font-serif">Failed to Load Institute Data</h2>
+          <p className="text-xs text-rose-700 mt-2 leading-relaxed bg-rose-50 p-3 rounded border border-rose-100 font-medium">
+            {dashboardError}
+          </p>
+          <div className="mt-5">
+            <button
+              onClick={loadData}
+              className="py-2 px-5 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors inline-flex items-center gap-1.5"
+            >
+              <RotateCw className="w-3.5 h-3.5" /> Retry Connection
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">

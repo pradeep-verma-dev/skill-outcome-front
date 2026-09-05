@@ -36,6 +36,7 @@ const PIE_COLORS = ['#1D4ED8', '#D97706', '#DC2626', '#059669', '#7C3AED', '#089
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState('');
   const [analytics, setAnalytics] = useState(null);
   const [pendingInstitutes, setPendingInstitutes] = useState([]);
   const [skillGaps, setSkillGaps] = useState([]);
@@ -45,6 +46,7 @@ const AdminDashboard = () => {
 
   const loadData = async () => {
     setLoading(true);
+    setDashboardError('');
     try {
       const [analyticsRes, pendingRes, skillGapsRes] = await Promise.all([
         api.get('/admin/analytics/overview'),
@@ -63,6 +65,13 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       console.error('Failed to load admin dashboard data:', err);
+      if (err.response?.status === 404) {
+        setDashboardError('API endpoint not found (404). Please verify that VITE_API_URL in your Vercel frontend settings points to your backend URL (e.g. https://your-backend.vercel.app/api).');
+      } else if (err.message === 'Network Error' || err.code === 'ERR_NETWORK') {
+        setDashboardError('Unable to connect to backend server. Please verify backend is running or check your internet connection.');
+      } else {
+        setDashboardError(err.response?.data?.message || err.message || 'Failed to fetch analytics from server');
+      }
     } finally {
       setLoading(false);
     }
@@ -137,6 +146,30 @@ const AdminDashboard = () => {
         <p className="mt-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">
           Loading National Analytics...
         </p>
+      </div>
+    );
+  }
+
+  if (dashboardError && !analytics) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-slate-50 min-h-[60vh]">
+        <div className="max-w-lg w-full bg-white border border-rose-200 rounded p-6 shadow-sm text-center">
+          <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center mx-auto mb-3">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <h2 className="text-base font-bold text-slate-900 font-serif">Failed to Load Dashboard Data</h2>
+          <p className="text-xs text-rose-700 mt-2 leading-relaxed bg-rose-50 p-3 rounded border border-rose-100 font-medium">
+            {dashboardError}
+          </p>
+          <div className="mt-5">
+            <button
+              onClick={loadData}
+              className="py-2 px-5 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors inline-flex items-center gap-1.5"
+            >
+              <RotateCw className="w-3.5 h-3.5" /> Retry Connection
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

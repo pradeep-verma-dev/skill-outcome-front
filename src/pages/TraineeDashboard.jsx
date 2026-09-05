@@ -29,6 +29,7 @@ const NON_PLACEMENT_REASONS = [
 const TraineeDashboard = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [profileError, setProfileError] = useState('');
   const [profileData, setProfileData] = useState(null);
   const [notification, setNotification] = useState(null);
 
@@ -59,6 +60,7 @@ const TraineeDashboard = () => {
 
   const loadProfile = async () => {
     setLoading(true);
+    setProfileError('');
     try {
       const res = await api.get('/trainee/me');
       if (res.data.success) {
@@ -85,6 +87,13 @@ const TraineeDashboard = () => {
       }
     } catch (err) {
       console.error('Failed to load trainee profile:', err);
+      if (err.response?.status === 404) {
+        setProfileError('API endpoint not found (404). Please verify that VITE_API_URL points to your backend URL.');
+      } else if (err.message === 'Network Error' || err.code === 'ERR_NETWORK') {
+        setProfileError('Unable to connect to backend server. Please verify backend is running on port 5000.');
+      } else {
+        setProfileError(err.response?.data?.message || err.message || 'Failed to fetch trainee profile from server');
+      }
     } finally {
       setLoading(false);
     }
@@ -176,6 +185,30 @@ const TraineeDashboard = () => {
         <p className="mt-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">
           Loading Trainee Records...
         </p>
+      </div>
+    );
+  }
+
+  if (profileError && !profileData) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-slate-50 min-h-[60vh]">
+        <div className="max-w-lg w-full bg-white border border-rose-200 rounded p-6 shadow-sm text-center">
+          <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center mx-auto mb-3">
+            <AlertCircle className="w-6 h-6" />
+          </div>
+          <h2 className="text-base font-bold text-slate-900 font-serif">Failed to Load Trainee Records</h2>
+          <p className="text-xs text-rose-700 mt-2 leading-relaxed bg-rose-50 p-3 rounded border border-rose-100 font-medium">
+            {profileError}
+          </p>
+          <div className="mt-5">
+            <button
+              onClick={loadProfile}
+              className="py-2 px-5 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors inline-flex items-center gap-1.5"
+            >
+              <RotateCw className="w-3.5 h-3.5" /> Retry Connection
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
