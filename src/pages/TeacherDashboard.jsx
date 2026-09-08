@@ -213,23 +213,23 @@ const TeacherDashboard = () => {
   }
 
   return (
-    <div className="flex-1 bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="flex-1 bg-slate-50 py-6 sm:py-8 px-3.5 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-5 sm:space-y-6">
         {/* Institute Info Header */}
-        <div className="bg-white border border-slate-200 rounded p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white border border-slate-200 rounded p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-blue-800 border border-blue-200 uppercase">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-blue-50 text-blue-800 border border-blue-200 uppercase">
                 Approved Training Provider
               </span>
-              <span className="text-xs text-slate-500 font-mono">
+              <span className="text-[11px] sm:text-xs text-slate-500 font-mono">
                 Reg No: {user?.govt_registration_number || user?.regNo || 'INST-REG'}
               </span>
-              <span className="text-xs text-slate-500">
+              <span className="text-[11px] sm:text-xs text-slate-500">
                 • District: {user?.district || 'General'}
               </span>
             </div>
-            <h1 className="text-2xl font-bold font-serif text-slate-950 mt-1">
+            <h1 className="text-xl sm:text-2xl font-bold font-serif text-slate-950 mt-1">
               {user?.name || 'Training Institute'} Dashboard
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -240,13 +240,13 @@ const TeacherDashboard = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors inline-flex items-center gap-1.5"
+              className="px-3.5 sm:px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors inline-flex items-center gap-1.5 cursor-pointer"
             >
               <UserPlus className="w-4 h-4" /> Enrol New Trainee
             </button>
             <button
               onClick={loadData}
-              className="p-2 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 transition-colors"
+              className="p-2 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 transition-colors cursor-pointer"
               title="Refresh Data"
             >
               <RotateCw className="w-4 h-4" />
@@ -255,7 +255,7 @@ const TeacherDashboard = () => {
         </div>
 
         {/* Metric Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           <StatCard
             title="Total Trainees"
             value={stats?.totalTrainees || 0}

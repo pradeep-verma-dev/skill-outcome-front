@@ -216,20 +216,20 @@ const TraineeDashboard = () => {
   const { trainee, outcome, verification, pendingFollowup, recommendation } = profileData || {};
 
   return (
-    <div className="flex-1 bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="flex-1 bg-slate-50 py-6 sm:py-8 px-3.5 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-5 sm:space-y-6">
         {/* Profile Card Header */}
-        <div className="bg-white border border-slate-200 rounded p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white border border-slate-200 rounded p-4 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase">
                 Trainee Portal
               </span>
               <span className="text-xs font-mono font-bold text-blue-950 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                 ID: {trainee?.uniqueId}
               </span>
             </div>
-            <h1 className="text-2xl font-bold font-serif text-slate-950 mt-1">
+            <h1 className="text-xl sm:text-2xl font-bold font-serif text-slate-950 mt-1">
               Welcome, {trainee?.name}
             </h1>
             <p className="text-xs text-slate-600 mt-0.5">
@@ -240,7 +240,7 @@ const TraineeDashboard = () => {
 
           <button
             onClick={loadProfile}
-            className="p-2 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 transition-colors self-start md:self-auto"
+            className="p-2 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 transition-colors self-start sm:self-auto cursor-pointer"
             title="Refresh Status"
           >
             <RotateCw className="w-4 h-4" />

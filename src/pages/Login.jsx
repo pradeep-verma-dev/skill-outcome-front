@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Landmark, Building2, UserCheck, ShieldCheck, KeyRound, Mail, AlertCircle } from 'lucide-react';
+import { Landmark, Building2, UserCheck, ShieldCheck, KeyRound, Mail, AlertCircle, Sparkles } from 'lucide-react';
 
 const formatErrorMessage = (err, defaultMsg) => {
   if (err.response?.status === 404) {
@@ -25,14 +25,22 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   // Form states
-  const [traineeId, setTraineeId] = useState('');
-  const [traineePin, setTraineePin] = useState('');
+  const [traineeId, setTraineeId] = useState(searchParams.get('id') || '');
+  const [traineePin, setTraineePin] = useState(searchParams.get('pin') || '');
 
-  const [teacherEmail, setTeacherEmail] = useState('');
-  const [teacherPassword, setTeacherPassword] = useState('');
+  const [teacherEmail, setTeacherEmail] = useState(
+    (initialRole === 'teacher' || initialRole === 'institute') ? (searchParams.get('email') || '') : ''
+  );
+  const [teacherPassword, setTeacherPassword] = useState(
+    (initialRole === 'teacher' || initialRole === 'institute') ? (searchParams.get('pass') || '') : ''
+  );
 
-  const [adminEmail, setAdminEmail] = useState('');
-  const [adminPassword, setAdminPassword] = useState('');
+  const [adminEmail, setAdminEmail] = useState(
+    initialRole === 'admin' ? (searchParams.get('email') || '') : ''
+  );
+  const [adminPassword, setAdminPassword] = useState(
+    initialRole === 'admin' ? (searchParams.get('pass') || '') : ''
+  );
 
   const { loginInstitute, loginTrainee, loginAdmin } = useAuth();
   const navigate = useNavigate();
@@ -42,6 +50,21 @@ const Login = () => {
     if (role === 'admin') setTab('admin');
     else if (role === 'teacher' || role === 'institute') setTab('teacher');
     else if (role === 'trainee') setTab('trainee');
+
+    const id = searchParams.get('id');
+    const pin = searchParams.get('pin');
+    if (id) setTraineeId(id);
+    if (pin) setTraineePin(pin);
+
+    const email = searchParams.get('email');
+    const pass = searchParams.get('pass');
+    if (email && (role === 'teacher' || role === 'institute')) {
+      setTeacherEmail(email);
+      if (pass) setTeacherPassword(pass);
+    } else if (email && role === 'admin') {
+      setAdminEmail(email);
+      if (pass) setAdminPassword(pass);
+    }
   }, [searchParams]);
 
   const handleTraineeLogin = async (e) => {
@@ -87,14 +110,14 @@ const Login = () => {
   };
 
   return (
-    <div className="flex-1 bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+    <div className="flex-1 bg-slate-50 py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8 flex flex-col justify-center">
       <div className="max-w-md w-full mx-auto">
         {/* Header */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded bg-blue-950 text-white border border-blue-900 shadow-xs mb-3">
-            <Landmark className="w-6 h-6 text-amber-400" />
+        <div className="text-center mb-5 sm:mb-6">
+          <div className="inline-flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded bg-blue-950 text-white border border-blue-900 shadow-xs mb-2.5 sm:mb-3">
+            <Landmark className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" />
           </div>
-          <h2 className="text-2xl font-bold font-serif text-slate-900 tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold font-serif text-slate-900 tracking-tight">
             Official Portal Login
           </h2>
           <p className="mt-1 text-xs text-slate-500">
@@ -107,40 +130,40 @@ const Login = () => {
           <button
             type="button"
             onClick={() => { setTab('trainee'); setError(''); }}
-            className={`flex-1 py-2 text-xs font-semibold rounded flex items-center justify-center gap-1.5 transition-colors ${
+            className={`flex-1 py-2 text-xs font-semibold rounded flex items-center justify-center gap-1 sm:gap-1.5 transition-colors ${
               tab === 'trainee'
                 ? 'bg-blue-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <UserCheck className="w-3.5 h-3.5" /> Trainee
+            <UserCheck className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">Trainee</span>
           </button>
           <button
             type="button"
             onClick={() => { setTab('teacher'); setError(''); }}
-            className={`flex-1 py-2 text-xs font-semibold rounded flex items-center justify-center gap-1.5 transition-colors ${
+            className={`flex-1 py-2 text-xs font-semibold rounded flex items-center justify-center gap-1 sm:gap-1.5 transition-colors ${
               tab === 'teacher'
                 ? 'bg-blue-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <Building2 className="w-3.5 h-3.5" /> Institute
+            <Building2 className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">Institute</span>
           </button>
           <button
             type="button"
             onClick={() => { setTab('admin'); setError(''); }}
-            className={`flex-1 py-2 text-xs font-semibold rounded flex items-center justify-center gap-1.5 transition-colors ${
+            className={`flex-1 py-2 text-xs font-semibold rounded flex items-center justify-center gap-1 sm:gap-1.5 transition-colors ${
               tab === 'admin'
                 ? 'bg-blue-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <ShieldCheck className="w-3.5 h-3.5" /> Admin
+            <ShieldCheck className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">Admin</span>
           </button>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white border border-slate-200 rounded-b p-6 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-b p-5 sm:p-6 shadow-sm">
           {error && (
             <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded text-xs text-rose-800 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
@@ -166,7 +189,12 @@ const Login = () => {
                     className="w-full pl-9 pr-3 py-2 text-sm font-mono border border-slate-300 rounded focus:ring-1 focus:ring-blue-900 focus:border-blue-900 outline-hidden bg-white text-slate-900 uppercase"
                   />
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1">Format: INST-YEAR-XXXX (issued by training institute)</p>
+                <div className="flex items-center justify-between mt-1 text-[11px] text-slate-500">
+                  <span>Format: INST-YEAR-XXXX</span>
+                  <Link to="/" className="text-blue-900 font-medium hover:underline inline-flex items-center gap-0.5">
+                    <Sparkles className="w-3 h-3 text-amber-500" /> View Demo IDs
+                  </Link>
+                </div>
               </div>
 
               <div>
@@ -190,7 +218,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
+                className="w-full py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 mt-2 cursor-pointer"
               >
                 {loading ? 'Verifying PIN...' : 'Access Trainee Portal'}
               </button>
@@ -246,7 +274,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? 'Authenticating...' : 'Sign In as Institute'}
               </button>
@@ -293,7 +321,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
+                className="w-full py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 mt-2 cursor-pointer"
               >
                 {loading ? 'Authenticating Admin...' : 'Sign In as Government Official'}
               </button>
