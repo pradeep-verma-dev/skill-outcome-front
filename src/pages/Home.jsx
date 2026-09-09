@@ -261,7 +261,7 @@ const Home = () => {
                     <span className="text-slate-500 font-mono text-[11px]">Pass:</span>
                     <span className="font-mono font-bold text-slate-900">Admin@2026</span>
                     <button
-                      onClick={() => copyToClipboard('AdminSecurePassword2026!', 'admin_pass')}
+                      onClick={() => copyToClipboard('Admin@2026', 'admin_pass')}
                       className="text-slate-400 hover:text-slate-700 p-0.5 shrink-0"
                       title="Copy Password"
                     >
