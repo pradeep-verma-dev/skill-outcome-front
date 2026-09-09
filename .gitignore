@@ -13,12 +13,14 @@ dist/
 dist-ssr/
 *.local
 
-# Environment variables
+# Environment variables & Credentials
 .env
 .env.development.local
 .env.test.local
 .env.production.local
 .env.local
+data.js
+src/data.js
 
 # Editor directories and files
 .vscode/*

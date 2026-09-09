@@ -19,104 +19,18 @@ import {
   CheckCircle,
   Clock,
   Briefcase,
-  AlertTriangle
+  AlertTriangle,
+  MapPin,
+  FileCheck
 } from 'lucide-react';
-
-const DEMO_TRAINEES = [
-  {
-    id: 'APEX-2026-6840',
-    pin: '6161',
-    name: 'Karan Mehra',
-    institute: 'Apex Skill Development Institute (Delhi)',
-    course: 'Electrician & Electrical Maintenance',
-    status: 'Ongoing Training',
-    outcome: 'Enrolled & Training in Progress',
-    badgeColor: 'blue',
-    goal: 'Become a certified industrial electrician in Delhi NCR'
-  },
-  {
-    id: 'APEX-2026-1001',
-    pin: '1234',
-    name: 'Rahul Sharma',
-    institute: 'Apex Skill Development Institute (Pune)',
-    course: 'Electrician & Electrical Maintenance',
-    status: 'Completed (Salaried)',
-    outcome: 'Employed at Tata Power (₹18,000/mo)',
-    badgeColor: 'emerald',
-    goal: 'Work in power distribution & substations'
-  },
-  {
-    id: 'APEX-2026-1002',
-    pin: '1234',
-    name: 'Pooja Verma',
-    institute: 'Apex Skill Development Institute (Pune)',
-    course: 'Web & Full Stack Software Development',
-    status: 'Completed (Salaried)',
-    outcome: 'Employed at Infosys BPM (₹24,000/mo)',
-    badgeColor: 'emerald',
-    goal: 'Get an IT job in software development'
-  },
-  {
-    id: 'APEX-2026-1003',
-    pin: '1234',
-    name: 'Amit Deshmukh',
-    institute: 'Apex Skill Development Institute (Pune)',
-    course: 'Solar Panel Installation & Maintenance',
-    status: 'Completed (Self-Employed)',
-    outcome: 'Own Solar Setup Business (₹25,000/mo)',
-    badgeColor: 'indigo',
-    goal: 'Start my own solar panel maintenance business'
-  },
-  {
-    id: 'APEX-2026-1004',
-    pin: '1234',
-    name: 'Sneha Patil',
-    institute: 'Apex Skill Development Institute (Pune)',
-    course: 'Electrician & Electrical Maintenance',
-    status: 'Skill-Gap Flagged',
-    outcome: 'Searching for Job (Goal mismatch detected)',
-    badgeColor: 'amber',
-    goal: 'Looking for an IT job in computers & web'
-  },
-  {
-    id: 'APEX-2026-1005',
-    pin: '1234',
-    name: 'Vikas Kulkarni',
-    institute: 'Apex Skill Development Institute (Pune)',
-    course: 'Automotive Repair & Two-Wheeler Servicing',
-    status: 'Ongoing Training',
-    outcome: 'Enrolled (Expected Nov 2026)',
-    badgeColor: 'blue',
-    goal: 'Work in EV manufacturing unit'
-  },
-  {
-    id: 'NVTC-2026-2001',
-    pin: '1234',
-    name: 'Arjun Gowda',
-    institute: 'National Vocational Training Center (Bangalore)',
-    course: 'Web & Full Stack Software Development',
-    status: 'Completed (Salaried)',
-    outcome: 'Frontend Dev at CloudScale (₹28,000/mo)',
-    badgeColor: 'emerald',
-    goal: 'Work as a frontend React developer'
-  },
-  {
-    id: 'NVTC-2026-2002',
-    pin: '1234',
-    name: 'Kavita Rao',
-    institute: 'National Vocational Training Center (Bangalore)',
-    course: 'General Duty Healthcare Assistant',
-    status: 'Completed (Salaried)',
-    outcome: 'Healthcare Staff at Apollo Clinic (₹15,000/mo)',
-    badgeColor: 'emerald',
-    goal: 'Work in a reputed hospital patient care team'
-  }
-];
+import { DEMO_ADMIN, DEMO_INSTITUTES, DEMO_TRAINEES } from '../data';
 
 const Home = () => {
   const [copiedKey, setCopiedKey] = useState(null);
-  const [showMoreModal, setShowMoreModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [showTraineeModal, setShowTraineeModal] = useState(false);
+  const [showInstituteModal, setShowInstituteModal] = useState(false);
+  const [traineeSearch, setTraineeSearch] = useState('');
+  const [instituteSearch, setInstituteSearch] = useState('');
   const navigate = useNavigate();
 
   const copyToClipboard = (text, key) => {
@@ -129,12 +43,25 @@ const Home = () => {
     navigate(`/login?role=trainee&id=${encodeURIComponent(trainee.id)}&pin=${encodeURIComponent(trainee.pin)}`);
   };
 
+  const handleLoginAsInstitute = (inst) => {
+    navigate(`/login?role=teacher&email=${encodeURIComponent(inst.email)}&pass=${encodeURIComponent(inst.password)}`);
+  };
+
   const filteredTrainees = DEMO_TRAINEES.filter(t => 
-    t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.course.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.institute.toLowerCase().includes(searchQuery.toLowerCase())
+    t.name.toLowerCase().includes(traineeSearch.toLowerCase()) ||
+    t.id.toLowerCase().includes(traineeSearch.toLowerCase()) ||
+    t.course.toLowerCase().includes(traineeSearch.toLowerCase()) ||
+    t.status.toLowerCase().includes(traineeSearch.toLowerCase()) ||
+    t.institute.toLowerCase().includes(traineeSearch.toLowerCase()) ||
+    (t.district && t.district.toLowerCase().includes(traineeSearch.toLowerCase()))
+  );
+
+  const filteredInstitutes = DEMO_INSTITUTES.filter(i =>
+    i.name.toLowerCase().includes(instituteSearch.toLowerCase()) ||
+    i.email.toLowerCase().includes(instituteSearch.toLowerCase()) ||
+    i.district.toLowerCase().includes(instituteSearch.toLowerCase()) ||
+    i.regNo.toLowerCase().includes(instituteSearch.toLowerCase()) ||
+    i.status.toLowerCase().includes(instituteSearch.toLowerCase())
   );
 
   return (
@@ -186,7 +113,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
-            {/* Trainee Credentials */}
+            {/* 1. Trainee Credentials */}
             <div className="bg-emerald-50/50 border border-emerald-200 rounded p-3.5 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-1">
@@ -195,9 +122,9 @@ const Home = () => {
                   </span>
                   <div className="flex items-center gap-1.5">
                     <button
-                      onClick={() => setShowMoreModal(true)}
+                      onClick={() => setShowTraineeModal(true)}
                       className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition-colors inline-flex items-center gap-1 cursor-pointer"
-                      title="View all 8 demo student IDs with different outcome states"
+                      title="View all 13 demo student IDs with different outcome states"
                     >
                       <Users className="w-3 h-3" /> More Users
                     </button>
@@ -237,27 +164,36 @@ const Home = () => {
               <div className="mt-2 pt-2 border-t border-emerald-200/60 flex items-center justify-between text-[11px] text-emerald-900">
                 <span className="truncate">Candidate: Karan Mehra</span>
                 <button
-                  onClick={() => setShowMoreModal(true)}
-                  className="text-emerald-700 font-bold hover:underline shrink-0 ml-1"
+                  onClick={() => setShowTraineeModal(true)}
+                  className="text-emerald-700 font-bold hover:underline shrink-0 ml-1 cursor-pointer"
                 >
-                  +7 More Profiles
+                  +{DEMO_TRAINEES.length - 1} More Students
                 </button>
               </div>
             </div>
 
-            {/* Institute Credentials */}
+            {/* 2. Institute Credentials */}
             <div className="bg-blue-50/50 border border-blue-200 rounded p-3.5 flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-1">
                   <span className="text-xs font-bold text-blue-950 flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-blue-700 shrink-0" /> 2. Training Institute
                   </span>
-                  <Link
-                    to="/login?role=teacher&email=apex.delhi@skills.gov.in&pass=TeacherSecurePass2026!"
-                    className="text-[11px] font-semibold text-blue-800 hover:underline inline-flex items-center gap-0.5"
-                  >
-                    Login <ArrowRight className="w-3 h-3" />
-                  </Link>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setShowInstituteModal(true)}
+                      className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-700 hover:bg-blue-800 text-white shadow-2xs transition-colors inline-flex items-center gap-1 cursor-pointer"
+                      title="View all 8 demo institutes (approved & pending for approval testing)"
+                    >
+                      <Building2 className="w-3 h-3" /> More Institutes
+                    </button>
+                    <Link
+                      to="/login?role=teacher&email=apex.delhi@skills.gov.in&pass=TeacherSecurePass2026!"
+                      className="text-[11px] font-semibold text-blue-800 hover:underline inline-flex items-center gap-0.5"
+                    >
+                      Login <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
                 </div>
                 <div className="mt-2.5 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between bg-white px-2 py-1 rounded border border-blue-100">
@@ -284,12 +220,18 @@ const Home = () => {
                   </div>
                 </div>
               </div>
-              <p className="text-[11px] text-blue-900 mt-2 pt-2 border-t border-blue-200/60 truncate">
-                Institute: Apex Skill Development Institute (Delhi)
-              </p>
+              <div className="mt-2 pt-2 border-t border-blue-200/60 flex items-center justify-between text-[11px] text-blue-900">
+                <span className="truncate">Apex Skill Dev (Pune/Delhi)</span>
+                <button
+                  onClick={() => setShowInstituteModal(true)}
+                  className="text-blue-700 font-bold hover:underline shrink-0 ml-1 cursor-pointer"
+                >
+                  +{DEMO_INSTITUTES.length - 1} More Providers
+                </button>
+              </div>
             </div>
 
-            {/* Admin Credentials */}
+            {/* 3. Admin Credentials */}
             <div className="bg-rose-50/50 border border-rose-200 rounded p-3.5 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between">
@@ -329,7 +271,7 @@ const Home = () => {
                 </div>
               </div>
               <p className="text-[11px] text-rose-900 mt-2 pt-2 border-t border-rose-200/60 truncate">
-                National Directorate • Live Analytics & Approvals
+                National Directorate • Full Analytics & Approvals
               </p>
             </div>
           </div>
@@ -380,8 +322,8 @@ const Home = () => {
                 Trainee Login <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <button
-                onClick={() => setShowMoreModal(true)}
-                className="text-xs font-semibold text-emerald-700 hover:underline inline-flex items-center gap-1"
+                onClick={() => setShowTraineeModal(true)}
+                className="text-xs font-semibold text-emerald-700 hover:underline inline-flex items-center gap-1 cursor-pointer"
               >
                 <Users className="w-3 h-3" /> View All Trainees
               </button>
@@ -412,13 +354,19 @@ const Home = () => {
                 </li>
               </ul>
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-100">
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
               <Link
                 to="/login?role=teacher"
                 className="text-xs font-semibold text-blue-900 hover:text-blue-950 inline-flex items-center gap-1"
               >
                 Institute Login <ArrowRight className="w-3.5 h-3.5" />
               </Link>
+              <button
+                onClick={() => setShowInstituteModal(true)}
+                className="text-xs font-semibold text-blue-700 hover:underline inline-flex items-center gap-1 cursor-pointer"
+              >
+                <Building2 className="w-3 h-3" /> View All Institutes
+              </button>
             </div>
           </div>
 
@@ -483,8 +431,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* "MORE USERS" / JUDGES DEMO TRAINEES MODAL */}
-      {showMoreModal && (
+      {/* 1. "MORE USERS" / JUDGES DEMO TRAINEES MODAL */}
+      {showTraineeModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
           <div className="bg-white border border-slate-300 rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in duration-200">
             {/* Modal Header */}
@@ -495,7 +443,7 @@ const Home = () => {
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-bold font-serif tracking-tight">
-                    Demo Student Accounts Directory
+                    Demo Student Accounts Directory ({DEMO_TRAINEES.length})
                   </h3>
                   <p className="text-[11px] text-slate-300">
                     Pre-configured candidate profiles with diverse outcome & follow-up test states
@@ -503,7 +451,7 @@ const Home = () => {
                 </div>
               </div>
               <button
-                onClick={() => setShowMoreModal(false)}
+                onClick={() => setShowTraineeModal(false)}
                 className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors cursor-pointer"
                 title="Close"
               >
@@ -517,8 +465,8 @@ const Home = () => {
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 <input
                   type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={traineeSearch}
+                  onChange={(e) => setTraineeSearch(e.target.value)}
                   placeholder="Search by student name, ID, course, status, or institute..."
                   className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-900 focus:border-blue-900 outline-hidden"
                 />
@@ -529,7 +477,7 @@ const Home = () => {
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
               {filteredTrainees.length === 0 ? (
                 <div className="text-center py-8 text-slate-500 text-xs">
-                  No trainee matching "{searchQuery}"
+                  No trainee matching "{traineeSearch}"
                 </div>
               ) : (
                 filteredTrainees.map((trainee) => (
@@ -554,6 +502,8 @@ const Home = () => {
                                 ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
                                 : trainee.badgeColor === 'amber'
                                 ? 'bg-amber-50 text-amber-800 border-amber-200'
+                                : trainee.badgeColor === 'purple'
+                                ? 'bg-purple-50 text-purple-800 border-purple-200'
                                 : 'bg-blue-50 text-blue-800 border-blue-200'
                             }`}
                           >
@@ -564,7 +514,7 @@ const Home = () => {
                           <strong>Course:</strong> {trainee.course}
                         </p>
                         <p className="text-[11px] text-slate-500 mt-0.5">
-                          <strong>Institute:</strong> {trainee.institute}
+                          <strong>Institute:</strong> {trainee.institute} ({trainee.district})
                         </p>
                         <p className="text-[11px] text-emerald-800 font-medium mt-1">
                           <strong>Outcome:</strong> {trainee.outcome}
@@ -583,7 +533,7 @@ const Home = () => {
                           </span>
                           <button
                             onClick={() => copyToClipboard(trainee.id, `modal_id_${trainee.id}`)}
-                            className="text-[11px] font-semibold text-slate-600 hover:text-slate-900 bg-white sm:bg-slate-100 px-2 py-0.5 rounded border border-slate-200 inline-flex items-center gap-1"
+                            className="text-[11px] font-semibold text-slate-600 hover:text-slate-900 bg-white sm:bg-slate-100 px-2 py-0.5 rounded border border-slate-200 inline-flex items-center gap-1 cursor-pointer"
                             title="Copy Trainee ID"
                           >
                             {copiedKey === `modal_id_${trainee.id}` ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
@@ -608,8 +558,162 @@ const Home = () => {
             <div className="px-5 py-3 bg-slate-100 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600 shrink-0">
               <span className="text-[11px]">Clicking <strong>"Login as..."</strong> will pre-fill credentials & open Trainee Portal.</span>
               <button
-                onClick={() => setShowMoreModal(false)}
-                className="px-4 py-1.5 text-xs font-semibold bg-white border border-slate-300 rounded hover:bg-slate-50 transition-colors"
+                onClick={() => setShowTraineeModal(false)}
+                className="px-4 py-1.5 text-xs font-semibold bg-white border border-slate-300 rounded hover:bg-slate-50 transition-colors cursor-pointer"
+              >
+                Close Directory
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. "MORE INSTITUTES" / DEMO TEACHERS & PROVIDERS MODAL */}
+      {showInstituteModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-300 rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in duration-200">
+            {/* Modal Header */}
+            <div className="px-5 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-500/30">
+                  <Building2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold font-serif tracking-tight">
+                    Demo Training Institutes Directory ({DEMO_INSTITUTES.length})
+                  </h3>
+                  <p className="text-[11px] text-slate-300">
+                    Approved training providers & pending applicant test accounts across diverse states
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowInstituteModal(false)}
+                className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search Bar */}
+            <div className="p-3 sm:p-4 bg-slate-50 border-b border-slate-200 shrink-0">
+              <div className="relative">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  value={instituteSearch}
+                  onChange={(e) => setInstituteSearch(e.target.value)}
+                  placeholder="Search by institute name, district, email, registration number, or approval status..."
+                  className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-900 focus:border-blue-900 outline-hidden"
+                />
+              </div>
+            </div>
+
+            {/* Institutes List */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
+              {filteredInstitutes.length === 0 ? (
+                <div className="text-center py-8 text-slate-500 text-xs">
+                  No institute matching "{instituteSearch}"
+                </div>
+              ) : (
+                filteredInstitutes.map((inst) => (
+                  <div
+                    key={inst.email}
+                    className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-4 hover:border-blue-300 transition-all shadow-2xs"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h4 className="text-sm font-bold text-slate-900 font-serif">
+                            {inst.name}
+                          </h4>
+                          <span
+                            className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
+                              inst.status === 'approved'
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                : 'bg-amber-50 text-amber-800 border-amber-200'
+                            }`}
+                          >
+                            {inst.status === 'approved' ? '✓ Approved Provider' : '⏳ Pending Admin Approval'}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-medium">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400" /> {inst.district}
+                          </span>
+                          <span className="font-mono text-slate-500">
+                            Reg: {inst.regNo}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-600">
+                          {inst.description}
+                        </p>
+                        <div className="pt-1 flex flex-wrap gap-1">
+                          {inst.coursesOffered?.map((course) => (
+                            <span key={course} className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded border border-slate-200">
+                              {course}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Credentials Box */}
+                      <div className="sm:text-right shrink-0 bg-slate-50 sm:bg-transparent p-2.5 sm:p-0 rounded border sm:border-0 border-slate-200 flex flex-col sm:items-end justify-between gap-2">
+                        <div className="space-y-1 text-xs">
+                          <div className="flex items-center gap-1.5 justify-end">
+                            <span className="text-slate-500 font-mono text-[10px]">Email:</span>
+                            <span className="font-mono font-bold text-slate-900 bg-white sm:bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-[11px]">
+                              {inst.email}
+                            </span>
+                            <button
+                              onClick={() => copyToClipboard(inst.email, `inst_email_${inst.email}`)}
+                              className="text-slate-400 hover:text-slate-700 p-0.5"
+                              title="Copy Email"
+                            >
+                              {copiedKey === `inst_email_${inst.email}` ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            </button>
+                          </div>
+                          <div className="flex items-center gap-1.5 justify-end">
+                            <span className="text-slate-500 font-mono text-[10px]">Pass:</span>
+                            <span className="font-mono font-bold text-slate-900 bg-white sm:bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-[11px]">
+                              {inst.password}
+                            </span>
+                            <button
+                              onClick={() => copyToClipboard(inst.password, `inst_pass_${inst.email}`)}
+                              className="text-slate-400 hover:text-slate-700 p-0.5"
+                              title="Copy Password"
+                            >
+                              {copiedKey === `inst_pass_${inst.email}` ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            </button>
+                          </div>
+                        </div>
+
+                        {inst.status === 'approved' ? (
+                          <button
+                            onClick={() => handleLoginAsInstitute(inst)}
+                            className="w-full sm:w-auto px-3.5 py-1.5 text-xs font-bold text-white bg-blue-900 hover:bg-blue-950 rounded shadow-xs transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                          >
+                            Login as Institute <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        ) : (
+                          <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 px-2 py-1 rounded border border-amber-200 text-center">
+                            Test via Admin Approval Queue
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-5 py-3 bg-slate-100 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600 shrink-0">
+              <span className="text-[11px]">Pending institutes can be approved live from the <strong>Government Admin</strong> portal!</span>
+              <button
+                onClick={() => setShowInstituteModal(false)}
+                className="px-4 py-1.5 text-xs font-semibold bg-white border border-slate-300 rounded hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 Close Directory
               </button>
