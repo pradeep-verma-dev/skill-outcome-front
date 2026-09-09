@@ -259,7 +259,7 @@ const Home = () => {
                   </div>
                   <div className="flex items-center justify-between bg-white px-2 py-1 rounded border border-rose-100">
                     <span className="text-slate-500 font-mono text-[11px]">Pass:</span>
-                    <span className="font-mono font-bold text-slate-900">AdminSecurePassword2026!</span>
+                    <span className="font-mono font-bold text-slate-900">Admin@2026</span>
                     <button
                       onClick={() => copyToClipboard('AdminSecurePassword2026!', 'admin_pass')}
                       className="text-slate-400 hover:text-slate-700 p-0.5 shrink-0"
