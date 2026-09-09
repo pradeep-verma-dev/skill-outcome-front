@@ -19,8 +19,6 @@ dist-ssr/
 .env.test.local
 .env.production.local
 .env.local
-data.js
-src/data.js
 
 # Editor directories and files
 .vscode/*
